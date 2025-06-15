@@ -142,6 +142,25 @@ body {
   padding: 1.5rem;
 }
 
+/* CPU and Memory Cards */
+.cpu-card .card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 280px;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.memory-card .card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .metric {
   display: flex;
   justify-content: space-between;
@@ -173,7 +192,23 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Memory card gauge should not be absolutely positioned */
+.memory-card .gauge-container {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
   margin: 1rem 0;
+  height: auto;
 }
 
 .circular-progress {
@@ -181,6 +216,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0;
 }
 
 .progress-ring {
@@ -221,30 +257,36 @@ body {
 
 /* Memory Details */
 .memory-details {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #222222;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+  border-top: 1px solid #333333;
 }
 
 .memory-stat {
   display: flex;
   flex-direction: column;
   align-items: center;
+  text-align: center;
 }
 
 .stat-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   color: #888888;
-  margin-bottom: 0.2rem;
-  letter-spacing: 0.5px;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 .stat-value {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: #ffffff;
-  font-weight: 400;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
 }
 
 /* Disk List */
