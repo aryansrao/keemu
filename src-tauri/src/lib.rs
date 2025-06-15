@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sysinfo::{System, Disks};
-use tauri::{Manager, window::Color};
+use tauri::Manager;
 
 #[derive(Serialize, Deserialize)]
 pub struct SystemInfo {
@@ -129,13 +129,11 @@ async fn create_detached_window(
         &window_id,
         tauri::WebviewUrl::App(format!("detached.html?component={}", component).into())
     )
-    .title(format!("Keemu - {}", component.to_uppercase()))
+    .title("")
     .inner_size(width, height)
     .min_inner_size(300.0, 200.0)
     .resizable(true)
-    .decorations(false)
-    .always_on_top(false)
-    .background_color(Color(0, 0, 0, 0))
+    .decorations(true)
     .build()
     .map_err(|e| e.to_string())?;
     
@@ -147,6 +145,11 @@ async fn close_current_window(window: tauri::Window) -> Result<(), String> {
     window.close().map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+async fn start_drag(window: tauri::Window) -> Result<(), String> {
+    window.start_dragging().map_err(|e| e.to_string())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
@@ -155,7 +158,8 @@ pub fn run() {
             get_system_info, 
             get_top_processes, 
             create_detached_window,
-            close_current_window
+            close_current_window,
+            start_drag
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

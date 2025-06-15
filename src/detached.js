@@ -59,12 +59,6 @@ function renderCPU(systemInfo) {
     <div class="card cpu-card">
       <div class="card-header">
         <h2>CPU MONITOR</h2>
-        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
       <div class="card-content">
         <div class="gauge-container">
@@ -92,12 +86,6 @@ function renderMemory(systemInfo) {
     <div class="card memory-card">
       <div class="card-header">
         <h2>MEMORY MONITOR</h2>
-        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
       <div class="card-content">
         <div class="gauge-container">
@@ -155,12 +143,6 @@ function renderStorage(systemInfo) {
     <div class="card disk-card">
       <div class="card-header">
         <h2>STORAGE MONITOR</h2>
-        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
       <div class="card-content">
         <div class="disk-list">
@@ -176,12 +158,6 @@ function renderOverview(systemInfo) {
     <div class="card system-overview">
       <div class="card-header">
         <h2>SYSTEM OVERVIEW</h2>
-        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="18" y1="6" x2="6" y2="18"></line>
-            <line x1="6" y1="6" x2="18" y2="18"></line>
-          </svg>
-        </button>
       </div>
       <div class="card-content">
         <div class="metric">
@@ -228,12 +204,6 @@ async function renderProcesses() {
       <div class="card processes-card">
         <div class="card-header">
           <h2>PROCESS MONITOR</h2>
-          <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          </button>
         </div>
         <div class="card-content">
           <div class="process-list">
@@ -297,9 +267,6 @@ window.addEventListener("DOMContentLoaded", () => {
     document.getElementById('detached-content').innerHTML = '<div class="error">Invalid component type</div>';
     return;
   }
-  
-  // Update window title
-  document.title = `Keemu - ${componentType.toUpperCase()}`;
   
   // Initial load
   updateComponent();

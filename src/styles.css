@@ -437,60 +437,78 @@ body {
   margin: 0;
   padding: 0;
   overflow: hidden;
-}
-
-.detached-container {
-  width: 100%;
   height: 100vh;
-  background: transparent !important;
-  padding: 0;
-  margin: 0;
+  width: 100vw;
 }
 
-.detached-content {
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-app-region: no-drag;
+/* Try to style the window chrome */
+html.detached-window {
+  background: #000000 !important;
 }
 
-/* Make detached cards take full space */
+/* Hide the default window controls and style the title bar */
+.detached-window::-webkit-window-controls {
+  display: none !important;
+}
+
+/* Style the title bar background */
+.detached-window {
+  --title-bar-background: #1a1a1a;
+  --title-bar-text-color: #ffffff;
+}
+
+/* Additional styling to match the header */
+.detached-window .card {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Make the card look like it's the entire window */
 .detached-window .card {
   width: 100%;
   height: 100%;
   margin: 0;
   border-radius: 0;
   background: #111111;
-  border: 1px solid #333333;
-  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+  border: none;
+  box-shadow: none;
   transition: none !important;
   transform: none !important;
 }
 
-/* Disable all hover effects for detached windows */
-.detached-window .card:hover {
-  transform: none !important;
-  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1) !important;
-}
-
+/* Style the header to look like a title bar */
 .detached-window .card-header {
-  background: #1a1a1a;
+  background: #2d2d2d;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #333333;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  user-select: none;
+  border-top: none;
+}
+
+/* Add an invisible drag area that extends beyond the header */
+.detached-window .card-header::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
   -webkit-app-region: drag;
-  cursor: move;
-  position: relative;
+  z-index: -1;
 }
 
 .detached-window .card-header h2 {
   margin: 0;
   text-align: center;
-  flex: 1;
   pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /* Detached window header and close button styles */
@@ -543,8 +561,19 @@ body {
 
 /* Adjust card content height to account for custom header */
 .detached-window .card-content {
-  height: calc(100% - 100px) !important;
+  height: calc(100% - 60px) !important;
   overflow-y: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* Make all text and interactive elements non-draggable */
+.detached-window .card-content * {
+  -webkit-app-region: no-drag;
+}
+
+.detached-window h2 {
+  -webkit-app-region: no-drag;
+  pointer-events: none;
 }
 
 /* Hide detach buttons in detached windows */
@@ -552,7 +581,45 @@ body {
   display: none;
 }
 
-.detached-window .card-content {
-  height: calc(100% - 60px);
-  overflow-y: auto;
+.detached-container {
+  width: 100%;
+  height: 100vh;
+  background: #000000 !important;
+  padding: 0;
+  margin: 0;
+  -webkit-app-region: drag;
 }
+
+.detached-content {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-app-region: no-drag;
+}
+
+/* Simple responsive fix for very narrow detached windows */
+.detached-window .gauge-container {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.detached-window .circular-progress {
+  flex-shrink: 0;
+}
+
+/* Ensure progress rings don't overflow in narrow windows */
+@media (max-width: 350px) {
+  .detached-window .progress-ring {
+    max-width: calc(100vw - 60px);
+    max-height: calc(100vw - 60px);
+    width: auto !important;
+    height: auto !important;
+  }
+}
+
+
+
