@@ -43,6 +43,14 @@ function formatUptime(seconds) {
   }
 }
 
+function formatNetworkData(bytes) {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
 // Circular progress animation
 function animateCircularProgress(element, percentage) {
   const circle = element;
@@ -185,6 +193,44 @@ function renderOverview(systemInfo) {
   `;
 }
 
+function renderNetwork(systemInfo) {
+  let networkHTML = '';
+  
+  systemInfo.network_interfaces.forEach(network => {
+    const totalErrors = network.errors_received + network.errors_transmitted;
+    
+    networkHTML += `
+      <div class="network-item">
+        <span class="network-name" title="${network.interface_name}">${network.interface_name}</span>
+        <span class="network-rx">${formatNetworkData(network.bytes_received)}</span>
+        <span class="network-tx">${formatNetworkData(network.bytes_transmitted)}</span>
+        <span class="network-errors ${totalErrors > 0 ? 'has-errors' : ''}">${totalErrors.toLocaleString()}</span>
+      </div>
+    `;
+  });
+  
+  return `
+    <div class="card network-card">
+      <div class="card-header">
+        <h2>NETWORK MONITOR</h2>
+      </div>
+      <div class="card-content">
+        <div class="network-list">
+          <div class="network-header">
+            <span>INTERFACE</span>
+            <span>RX</span>
+            <span>TX</span>
+            <span>ERRORS</span>
+          </div>
+          <div class="network-interfaces">
+            ${networkHTML}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 async function renderProcesses() {
   try {
     const processes = await invoke('get_top_processes');
@@ -249,6 +295,9 @@ async function updateComponent() {
           break;
         case 'overview':
           content.innerHTML = renderOverview(systemInfo);
+          break;
+        case 'network':
+          content.innerHTML = renderNetwork(systemInfo);
           break;
       }
     }

@@ -134,8 +134,34 @@
           </div>
         </div>
 
+        <!-- Network Interfaces -->
+        <div class="card network-card" data-fade="up" data-delay="0.5">
+          <div class="card-header">
+            <h2>NETWORK</h2>
+            <button class="detach-btn" data-component="network" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="network-list">
+              <div class="network-header">
+                <span>INTERFACE</span>
+                <span>RX</span>
+                <span>TX</span>
+                <span>ERRORS</span>
+              </div>
+              <div id="network-interfaces" class="network-interfaces">
+                <!-- Network interface items will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Top Processes -->
-        <div class="card processes-card" data-fade="up" data-delay="0.5">
+        <div class="card processes-card" data-fade="up" data-delay="0.6">
           <div class="card-header">
             <h2>PROCESSES</h2>
             <button class="detach-btn" data-component="processes" title="Pop out to new window">

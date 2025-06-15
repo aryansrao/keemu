@@ -26,6 +26,14 @@ function formatUptime(seconds) {
   }
 }
 
+function formatNetworkData(bytes) {
+  if (bytes === 0) return '0 B';
+  const k = 1024;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+}
+
 // Circular progress animation
 function animateCircularProgress(element, percentage, animate = true) {
   const circle = element;
@@ -124,6 +132,71 @@ async function updateSystemInfo() {
           diskItem.querySelectorAll('.value')[0].textContent = formatBytes(disk.used_space);
           diskItem.querySelectorAll('.value')[1].textContent = formatBytes(disk.available_space);
         }
+      });
+    }
+    
+    // Update network interfaces
+    const networkInterfaces = document.getElementById('network-interfaces');
+    
+    if (!isInitialized) {
+      // First load - create elements with animation
+      networkInterfaces.innerHTML = '';
+      
+      systemInfo.network_interfaces.forEach((network, index) => {
+        const networkItem = document.createElement('div');
+        networkItem.className = 'network-item';
+        
+        const totalErrors = network.errors_received + network.errors_transmitted;
+        
+        networkItem.innerHTML = `
+          <span class="network-name" title="${network.interface_name}">${network.interface_name}</span>
+          <span class="network-rx">${formatNetworkData(network.bytes_received)}</span>
+          <span class="network-tx">${formatNetworkData(network.bytes_transmitted)}</span>
+          <span class="network-errors ${totalErrors > 0 ? 'has-errors' : ''}">${totalErrors.toLocaleString()}</span>
+        `;
+        
+        networkInterfaces.appendChild(networkItem);
+        
+        // Animate network items only on first load
+        gsap.fromTo(networkItem, 
+          { opacity: 0, x: -20 },
+          { 
+            opacity: 1, 
+            x: 0, 
+            duration: 0.3, 
+            delay: index * 0.05,
+            ease: "power2.out"
+          }
+        );
+      });
+    } else {
+      // Just update existing network data without recreating elements
+      const networkItems = networkInterfaces.querySelectorAll('.network-item');
+      
+      // Remove excess items if there are fewer interfaces
+      while (networkItems.length > systemInfo.network_interfaces.length) {
+        networkInterfaces.removeChild(networkItems[networkItems.length - 1]);
+      }
+      
+      systemInfo.network_interfaces.forEach((network, index) => {
+        let networkItem = networkItems[index];
+        
+        if (!networkItem) {
+          // Create new item if needed (but don't animate)
+          networkItem = document.createElement('div');
+          networkItem.className = 'network-item';
+          networkInterfaces.appendChild(networkItem);
+        }
+        
+        const totalErrors = network.errors_received + network.errors_transmitted;
+        
+        // Update content without animation
+        networkItem.innerHTML = `
+          <span class="network-name" title="${network.interface_name}">${network.interface_name}</span>
+          <span class="network-rx">${formatNetworkData(network.bytes_received)}</span>
+          <span class="network-tx">${formatNetworkData(network.bytes_transmitted)}</span>
+          <span class="network-errors ${totalErrors > 0 ? 'has-errors' : ''}">${totalErrors.toLocaleString()}</span>
+        `;
       });
     }
     

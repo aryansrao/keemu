@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use sysinfo::{System, Disks};
+use sysinfo::{System, Disks, Networks};
 use tauri::Manager;
 
 #[derive(Serialize, Deserialize)]
@@ -9,6 +9,7 @@ pub struct SystemInfo {
     pub total_memory: u64,
     pub memory_percent: f32,
     pub disk_usage: Vec<DiskInfo>,
+    pub network_interfaces: Vec<NetworkInfo>,
     pub process_count: usize,
     pub uptime: u64,
     pub system_name: String,
@@ -32,6 +33,17 @@ pub struct ProcessInfo {
     pub name: String,
     pub cpu_usage: f32,
     pub memory: u64,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct NetworkInfo {
+    pub interface_name: String,
+    pub bytes_received: u64,
+    pub bytes_transmitted: u64,
+    pub packets_received: u64,
+    pub packets_transmitted: u64,
+    pub errors_received: u64,
+    pub errors_transmitted: u64,
 }
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
@@ -69,6 +81,20 @@ async fn get_system_info() -> Result<SystemInfo, String> {
     // Process count
     let process_count = sys.processes().len();
     
+    // Network information
+    let networks = Networks::new_with_refreshed_list();
+    let network_interfaces: Vec<NetworkInfo> = networks.iter().map(|(interface_name, data)| {
+        NetworkInfo {
+            interface_name: interface_name.clone(),
+            bytes_received: data.total_received(),
+            bytes_transmitted: data.total_transmitted(),
+            packets_received: data.total_packets_received(),
+            packets_transmitted: data.total_packets_transmitted(),
+            errors_received: data.total_errors_on_received(),
+            errors_transmitted: data.total_errors_on_transmitted(),
+        }
+    }).collect();
+    
     // System information
     let system_name = System::name().unwrap_or_else(|| "Unknown".to_string());
     let kernel_version = System::kernel_version().unwrap_or_else(|| "Unknown".to_string());
@@ -81,6 +107,7 @@ async fn get_system_info() -> Result<SystemInfo, String> {
         total_memory,
         memory_percent,
         disk_usage,
+        network_interfaces,
         process_count,
         uptime,
         system_name,
