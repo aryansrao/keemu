@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sysinfo::{System, Disks};
+use tauri::Manager;
 
 #[derive(Serialize, Deserialize)]
 pub struct SystemInfo {
@@ -110,11 +111,45 @@ async fn get_top_processes() -> Result<Vec<ProcessInfo>, String> {
     Ok(processes)
 }
 
+#[tauri::command]
+async fn create_detached_window(
+    app: tauri::AppHandle,
+    component: String,
+    width: f64,
+    height: f64,
+) -> Result<(), String> {
+    let window_id = format!("detached_{}", component);
+    
+    if app.get_webview_window(&window_id).is_some() {
+        return Err("Window already exists".to_string());
+    }
+    
+    let _window = tauri::WebviewWindowBuilder::new(
+        &app,
+        &window_id,
+        tauri::WebviewUrl::App(format!("detached.html?component={}", component).into())
+    )
+    .title(format!("Keemu - {}", component.to_uppercase()))
+    .inner_size(width, height)
+    .min_inner_size(300.0, 200.0)
+    .resizable(true)
+    .decorations(false)
+    .always_on_top(false)
+    .build()
+    .map_err(|e| e.to_string())?;
+    
+    Ok(())
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![get_system_info, get_top_processes])
+        .invoke_handler(tauri::generate_handler![
+            get_system_info, 
+            get_top_processes, 
+            create_detached_window
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

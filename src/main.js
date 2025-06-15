@@ -242,6 +242,41 @@ window.addEventListener("DOMContentLoaded", () => {
   
   // Set up auto-refresh every 2 seconds
   refreshInterval = setInterval(refreshData, 2000);
+  
+  // Set up detach button handlers
+  const detachButtons = document.querySelectorAll('.detach-btn');
+  detachButtons.forEach(button => {
+    button.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const component = button.getAttribute('data-component');
+      if (component) {
+        try {
+          // Add visual feedback
+          button.style.transform = 'scale(0.95)';
+          button.style.opacity = '0.7';
+          
+          await invoke('create_detached_window', { 
+            component: component,
+            width: 600.0,
+            height: 400.0
+          });
+          
+          // Reset visual feedback
+          setTimeout(() => {
+            button.style.transform = '';
+            button.style.opacity = '';
+          }, 150);
+        } catch (error) {
+          console.error('Failed to create detached window:', error);
+          // Reset visual feedback on error
+          button.style.transform = '';
+          button.style.opacity = '';
+        }
+      }
+    });
+  });
 });
 
 // Clean up on window unload

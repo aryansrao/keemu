@@ -94,6 +94,9 @@ body {
   background: #1a1a1a;
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #333333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .card-header h2 {
@@ -102,6 +105,37 @@ body {
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 1px;
+}
+
+.detach-btn {
+  background: transparent;
+  border: 1px solid #333333;
+  color: #999999;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+}
+
+.detach-btn:hover {
+  background: #333333;
+  color: #ffffff;
+  border-color: #555555;
+  transform: translateY(-1px);
+}
+
+.detach-btn:active {
+  transform: translateY(0);
+}
+
+.detach-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
 .card-content {
@@ -392,4 +426,65 @@ body {
   .progress-ring-progress {
     r: 44;
   }
+}
+
+/* Detached Window Styles */
+.detached-window {
+  background: #000000 !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.detached-container {
+  width: 100%;
+  height: 100vh;
+  background: #000000;
+  padding: 0;
+  margin: 0;
+  -webkit-app-region: drag;
+  cursor: move;
+}
+
+.detached-content {
+  -webkit-app-region: no-drag;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+/* Make detached cards take full space */
+.detached-window .card {
+  width: 100%;
+  height: calc(100% - 2rem);
+  margin: 0;
+  border-radius: 8px;
+}
+
+.detached-window .card-header {
+  background: #1a1a1a;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.detached-window .card-header h2 {
+  margin: 0;
+  text-align: center;
+}
+
+/* Hide detach buttons in detached windows */
+.detached-window .detach-btn {
+  display: none;
+}
+
+.detached-window .card-content {
+  height: calc(100% - 60px);
+  overflow-y: auto;
 }
