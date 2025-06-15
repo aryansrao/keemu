@@ -4,36 +4,96 @@
     <meta charset="UTF-8" />
     <link rel="stylesheet" href="styles.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tauri App</title>
+    <title>Keemu - System Monitor</title>
     <script type="module" src="/main.js" defer></script>
   </head>
 
   <body>
     <main class="container">
-      <h1>Welcome to Tauri</h1>
+      <h1>🖥️ Keemu System Monitor</h1>
+      
+      <div class="system-grid">
+        <!-- CPU & Memory Card -->
+        <div class="card">
+          <h2>💾 CPU & Memory</h2>
+          <div class="metric">
+            <span class="metric-label">CPU Usage</span>
+            <span class="metric-value" id="cpu-usage">0%</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="cpu-progress"></div>
+          </div>
+          
+          <div class="metric">
+            <span class="metric-label">Memory Usage</span>
+            <span class="metric-value" id="memory-usage">0 GB / 0 GB</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" id="memory-progress"></div>
+          </div>
+        </div>
 
-      <div class="row">
-        <a href="https://tauri.app" target="_blank">
-          <img src="/assets/tauri.svg" class="logo tauri" alt="Tauri logo" />
-        </a>
-        <a
-          href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"
-          target="_blank"
-        >
-          <img
-            src="/assets/javascript.svg"
-            class="logo vanilla"
-            alt="JavaScript logo"
-          />
-        </a>
+        <!-- System Info Card -->
+        <div class="card system-info">
+          <h2>🖥️ System Information</h2>
+          <div class="metric">
+            <span class="metric-label">Hostname</span>
+            <span class="metric-value" id="hostname">Loading...</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Operating System</span>
+            <span class="metric-value" id="os-name">Loading...</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Kernel Version</span>
+            <span class="metric-value" id="kernel-version">Loading...</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Uptime</span>
+            <span class="metric-value" id="uptime">Loading...</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Running Processes</span>
+            <span class="metric-value" id="process-count">0</span>
+          </div>
+        </div>
+
+        <!-- Disk Usage Card -->
+        <div class="card">
+          <h2>💿 Disk Usage</h2>
+          <div id="disk-list">
+            <div class="metric">
+              <span class="metric-label">Loading disk information...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Processes Card -->
+        <div class="card">
+          <h2>⚡ Top Processes</h2>
+          <div class="process-list">
+            <div class="process-header">
+              <span>PID</span>
+              <span>Name</span>
+              <span>CPU %</span>
+              <span>Memory</span>
+            </div>
+            <div id="process-list">
+              <div class="process-item">
+                <span>Loading...</span>
+                <span>Loading...</span>
+                <span>Loading...</span>
+                <span>Loading...</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <p>Click on the Tauri logo to learn more about the framework</p>
 
-      <form class="row" id="greet-form">
-        <input id="greet-input" placeholder="Enter a name..." />
-        <button type="submit">Greet</button>
-      </form>
-      <p id="greet-msg"></p>
+      <button class="refresh-btn" id="refresh-btn">
+        🔄 Refresh Data
+        <span class="loading" id="loading" style="display: none;"></span>
+      </button>
     </main>
   </body>
 </html>

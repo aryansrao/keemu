@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "keemu",
+  "productName": "Keemu System Monitor",
   "version": "0.1.0",
-  "identifier": "aryansrao",
+  "identifier": "com.keemu.system-monitor",
   "build": {
     "frontendDist": "../src"
   },
@@ -10,9 +10,11 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "keemu",
-        "width": 800,
-        "height": 600
+        "title": "Keemu System Monitor",
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600
       }
     ],
     "security": {
