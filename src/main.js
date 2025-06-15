@@ -1,6 +1,7 @@
 const { invoke } = window.__TAURI__.core;
 
 let refreshInterval = null;
+let isInitialized = false;
 
 // Utility functions
 function formatBytes(bytes) {
@@ -26,19 +27,24 @@ function formatUptime(seconds) {
 }
 
 // Circular progress animation
-function animateCircularProgress(element, percentage) {
+function animateCircularProgress(element, percentage, animate = true) {
   const circle = element;
   const radius = circle.r.baseVal.value;
   const circumference = radius * 2 * Math.PI;
   
   circle.style.strokeDasharray = `${circumference} ${circumference}`;
-  circle.style.strokeDashoffset = circumference;
   
-  gsap.to(circle, {
-    strokeDashoffset: circumference - (percentage / 100) * circumference,
-    duration: 1.5,
-    ease: "power2.out"
-  });
+  if (animate) {
+    circle.style.strokeDashoffset = circumference;
+    gsap.to(circle, {
+      strokeDashoffset: circumference - (percentage / 100) * circumference,
+      duration: 1.5,
+      ease: "power2.out"
+    });
+  } else {
+    // For data updates, just set the value without animation
+    circle.style.strokeDashoffset = circumference - (percentage / 100) * circumference;
+  }
 }
 
 // Update system information display
@@ -48,7 +54,7 @@ async function updateSystemInfo() {
     
     // Update CPU usage
     document.getElementById('cpu-percentage').textContent = `${systemInfo.cpu_usage.toFixed(1)}%`;
-    animateCircularProgress(document.getElementById('cpu-circle'), systemInfo.cpu_usage);
+    animateCircularProgress(document.getElementById('cpu-circle'), systemInfo.cpu_usage, !isInitialized);
     
     // Update memory usage
     const memoryGb = systemInfo.memory_usage / (1024 * 1024 * 1024);
@@ -57,7 +63,7 @@ async function updateSystemInfo() {
     document.getElementById('memory-percentage').textContent = `${systemInfo.memory_percent.toFixed(1)}%`;
     document.getElementById('memory-used').textContent = `${memoryGb.toFixed(1)} GB`;
     document.getElementById('memory-total').textContent = `${totalMemoryGb.toFixed(1)} GB`;
-    animateCircularProgress(document.getElementById('memory-circle'), systemInfo.memory_percent);
+    animateCircularProgress(document.getElementById('memory-circle'), systemInfo.memory_percent, !isInitialized);
     
     // Update system information
     document.getElementById('system-name').textContent = systemInfo.system_name;
@@ -68,41 +74,58 @@ async function updateSystemInfo() {
     
     // Update disk usage
     const diskList = document.getElementById('disk-list');
-    diskList.innerHTML = '';
     
-    systemInfo.disk_usage.forEach((disk, index) => {
-      const diskItem = document.createElement('div');
-      diskItem.className = 'disk-item';
+    // Only animate disk creation on first load
+    if (!isInitialized) {
+      diskList.innerHTML = '';
       
-      diskItem.innerHTML = `
-        <div class="disk-header">
-          <span class="disk-name">${disk.mount_point}</span>
-          <span class="disk-usage">${disk.usage_percent.toFixed(1)}%</span>
-        </div>
-        <div class="disk-bar">
-          <div class="disk-fill" style="width: 0%"></div>
-        </div>
-        <div class="metric">
-          <span class="label">USED</span>
-          <span class="value">${formatBytes(disk.used_space)}</span>
-        </div>
-        <div class="metric">
-          <span class="label">FREE</span>
-          <span class="value">${formatBytes(disk.available_space)}</span>
-        </div>
-      `;
-      
-      diskList.appendChild(diskItem);
-      
-      // Animate disk bar
-      const diskFill = diskItem.querySelector('.disk-fill');
-      gsap.to(diskFill, {
-        width: `${disk.usage_percent}%`,
-        duration: 1,
-        delay: index * 0.1,
-        ease: "power2.out"
+      systemInfo.disk_usage.forEach((disk, index) => {
+        const diskItem = document.createElement('div');
+        diskItem.className = 'disk-item';
+        
+        diskItem.innerHTML = `
+          <div class="disk-header">
+            <span class="disk-name">${disk.mount_point}</span>
+            <span class="disk-usage">${disk.usage_percent.toFixed(1)}%</span>
+          </div>
+          <div class="disk-bar">
+            <div class="disk-fill" style="width: 0%"></div>
+          </div>
+          <div class="metric">
+            <span class="label">USED</span>
+            <span class="value">${formatBytes(disk.used_space)}</span>
+          </div>
+          <div class="metric">
+            <span class="label">FREE</span>
+            <span class="value">${formatBytes(disk.available_space)}</span>
+          </div>
+        `;
+        
+        diskList.appendChild(diskItem);
+        
+        // Animate disk bar only on first load
+        const diskFill = diskItem.querySelector('.disk-fill');
+        gsap.to(diskFill, {
+          width: `${disk.usage_percent}%`,
+          duration: 1,
+          delay: index * 0.1,
+          ease: "power2.out"
+        });
       });
-    });
+    } else {
+      // Just update existing disk data without recreating elements
+      const diskItems = diskList.querySelectorAll('.disk-item');
+      systemInfo.disk_usage.forEach((disk, index) => {
+        if (diskItems[index]) {
+          const diskItem = diskItems[index];
+          diskItem.querySelector('.disk-name').textContent = disk.mount_point;
+          diskItem.querySelector('.disk-usage').textContent = `${disk.usage_percent.toFixed(1)}%`;
+          diskItem.querySelector('.disk-fill').style.width = `${disk.usage_percent}%`;
+          diskItem.querySelectorAll('.value')[0].textContent = formatBytes(disk.used_space);
+          diskItem.querySelectorAll('.value')[1].textContent = formatBytes(disk.available_space);
+        }
+      });
+    }
     
   } catch (error) {
     console.error('Error fetching system info:', error);
@@ -114,32 +137,61 @@ async function updateTopProcesses() {
     const processes = await invoke('get_top_processes');
     const processList = document.getElementById('process-list');
     
-    processList.innerHTML = '';
-    
-    processes.forEach((process, index) => {
-      const processItem = document.createElement('div');
-      processItem.className = 'process-item';
+    if (!isInitialized) {
+      // First load - create elements with animation
+      processList.innerHTML = '';
       
-      processItem.innerHTML = `
-        <span class="process-name" title="${process.name}">${process.name}</span>
-        <span class="process-cpu">${process.cpu_usage.toFixed(1)}%</span>
-        <span class="process-memory">${formatBytes(process.memory)}</span>
-      `;
+      processes.forEach((process, index) => {
+        const processItem = document.createElement('div');
+        processItem.className = 'process-item';
+        
+        processItem.innerHTML = `
+          <span class="process-name" title="${process.name}">${process.name}</span>
+          <span class="process-cpu">${process.cpu_usage.toFixed(1)}%</span>
+          <span class="process-memory">${formatBytes(process.memory)}</span>
+        `;
+        
+        processList.appendChild(processItem);
+        
+        // Animate process items only on first load
+        gsap.fromTo(processItem, 
+          { opacity: 0, x: -20 },
+          { 
+            opacity: 1, 
+            x: 0, 
+            duration: 0.3, 
+            delay: index * 0.05,
+            ease: "power2.out"
+          }
+        );
+      });
+    } else {
+      // Subsequent updates - just update existing data without animation
+      const processItems = processList.querySelectorAll('.process-item');
       
-      processList.appendChild(processItem);
+      // Remove excess items if there are fewer processes
+      while (processItems.length > processes.length) {
+        processList.removeChild(processItems[processItems.length - 1]);
+      }
       
-      // Animate process items
-      gsap.fromTo(processItem, 
-        { opacity: 0, x: -20 },
-        { 
-          opacity: 1, 
-          x: 0, 
-          duration: 0.3, 
-          delay: index * 0.05,
-          ease: "power2.out"
+      processes.forEach((process, index) => {
+        let processItem = processItems[index];
+        
+        if (!processItem) {
+          // Create new item if needed (but don't animate)
+          processItem = document.createElement('div');
+          processItem.className = 'process-item';
+          processList.appendChild(processItem);
         }
-      );
-    });
+        
+        // Update content without animation
+        processItem.innerHTML = `
+          <span class="process-name" title="${process.name}">${process.name}</span>
+          <span class="process-cpu">${process.cpu_usage.toFixed(1)}%</span>
+          <span class="process-memory">${formatBytes(process.memory)}</span>
+        `;
+      });
+    }
     
   } catch (error) {
     console.error('Error fetching processes:', error);
@@ -153,6 +205,11 @@ async function refreshData() {
       updateSystemInfo(),
       updateTopProcesses()
     ]);
+    
+    // Mark as initialized after first successful data load
+    if (!isInitialized) {
+      isInitialized = true;
+    }
   } catch (error) {
     console.error('Error refreshing data:', error);
   }
