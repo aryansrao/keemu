@@ -200,6 +200,26 @@ async function updateSystemInfo() {
       });
     }
     
+    // Update network info
+    document.getElementById('ipv4-address').textContent = systemInfo.network_details.ipv4_address;
+    document.getElementById('ipv6-address').textContent = systemInfo.network_details.ipv6_address;
+    document.getElementById('mac-address').textContent = systemInfo.network_details.mac_address;
+    document.getElementById('frequency').textContent = systemInfo.network_details.frequency;
+    document.getElementById('signal-strength').textContent = systemInfo.network_details.signal_strength;
+    
+    // Format DNS servers nicely
+    const dnsElement = document.getElementById('dns-servers');
+    if (systemInfo.network_details.dns_servers.length > 0) {
+      // Take only first 2 DNS servers to avoid clutter
+      const primaryDns = systemInfo.network_details.dns_servers.slice(0, 2);
+      dnsElement.textContent = primaryDns.join('\n');
+      dnsElement.className = 'value dns-list';
+      dnsElement.style.whiteSpace = 'pre-line';
+    } else {
+      dnsElement.textContent = 'N/A';
+      dnsElement.className = 'value';
+    }
+    
   } catch (error) {
     console.error('Error fetching system info:', error);
   }

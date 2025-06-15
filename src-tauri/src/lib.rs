@@ -1,6 +1,7 @@
 use serde::{Deserialize, Serialize};
 use sysinfo::{System, Disks, Networks};
 use tauri::Manager;
+use std::process::Command;
 
 #[derive(Serialize, Deserialize)]
 pub struct SystemInfo {
@@ -10,6 +11,7 @@ pub struct SystemInfo {
     pub memory_percent: f32,
     pub disk_usage: Vec<DiskInfo>,
     pub network_interfaces: Vec<NetworkInfo>,
+    pub network_details: NetworkInterfaceDetails,
     pub process_count: usize,
     pub uptime: u64,
     pub system_name: String,
@@ -45,6 +47,152 @@ pub struct NetworkInfo {
     pub errors_received: u64,
     pub errors_transmitted: u64,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct NetworkInterfaceDetails {
+    pub ipv4_address: String,
+    pub ipv6_address: String,
+    pub mac_address: String,
+    pub frequency: String,
+    pub signal_strength: String,
+    pub dns_servers: Vec<String>,
+}
+
+fn get_network_interface_details() -> NetworkInterfaceDetails {
+    // Get network info using system commands (macOS/Linux compatible)
+    if cfg!(target_os = "macos") {
+        if let Ok(output) = Command::new("ifconfig").output() {
+            let output_str = String::from_utf8_lossy(&output.stdout);
+            return parse_macos_network_info(&output_str);
+        }
+    } else if cfg!(target_os = "linux") {
+        // Basic Linux support
+        return NetworkInterfaceDetails {
+            ipv4_address: get_linux_ipv4(),
+            ipv6_address: get_linux_ipv6(),
+            mac_address: get_linux_mac(),
+            frequency: "N/A".to_string(),
+            signal_strength: "N/A".to_string(),
+            dns_servers: get_linux_dns(),
+        };
+    } else if cfg!(target_os = "windows") {
+        // Basic Windows support
+        return NetworkInterfaceDetails {
+            ipv4_address: get_windows_ipv4(),
+            ipv6_address: get_windows_ipv6(),
+            mac_address: get_windows_mac(),
+            frequency: "N/A".to_string(),
+            signal_strength: "N/A".to_string(),
+            dns_servers: get_windows_dns(),
+        };
+    }
+    
+    // Fallback
+    NetworkInterfaceDetails {
+        ipv4_address: "N/A".to_string(),
+        ipv6_address: "N/A".to_string(),
+        mac_address: "N/A".to_string(),
+        frequency: "N/A".to_string(),
+        signal_strength: "N/A".to_string(),
+        dns_servers: vec![],
+    }
+}
+
+fn parse_macos_network_info(output: &str) -> NetworkInterfaceDetails {
+    let mut ipv4_address = String::new();
+    let mut ipv6_address = String::new();
+    let mut mac_address = String::new();
+    let mut frequency = "N/A".to_string();
+    let mut signal_strength = "N/A".to_string();
+    let mut dns_servers = Vec::new();
+    
+    // Parse ifconfig output for active interfaces
+    for line in output.lines() {
+        let line = line.trim();
+        
+        // Get IPv4 address
+        if line.contains("inet ") && !line.contains("127.0.0.1") && !line.contains("inet6") {
+            if let Some(inet_part) = line.split("inet ").nth(1) {
+                if let Some(ip_part) = inet_part.split_whitespace().next() {
+                    if ipv4_address.is_empty() {
+                        ipv4_address = ip_part.to_string();
+                    }
+                }
+            }
+        }
+        
+        // Get IPv6 address
+        if line.contains("inet6 ") && !line.contains("::1") && !line.contains("fe80") {
+            if let Some(inet6_part) = line.split("inet6 ").nth(1) {
+                if let Some(ip6_part) = inet6_part.split_whitespace().next() {
+                    if ipv6_address.is_empty() {
+                        ipv6_address = ip6_part.to_string();
+                    }
+                }
+            }
+        }
+        
+        // Get MAC address
+        if line.contains("ether ") && mac_address.is_empty() {
+            if let Some(ether_part) = line.split("ether ").nth(1) {
+                if let Some(mac_part) = ether_part.split_whitespace().next() {
+                    mac_address = mac_part.to_string();
+                }
+            }
+        }
+    }
+    
+    // Get DNS servers
+    if let Ok(dns_output) = Command::new("scutil").args(&["--dns"]).output() {
+        let dns_str = String::from_utf8_lossy(&dns_output.stdout);
+        for line in dns_str.lines() {
+            if line.trim().starts_with("nameserver[") {
+                if let Some(dns_part) = line.split(" : ").nth(1) {
+                    dns_servers.push(dns_part.trim().to_string());
+                }
+            }
+        }
+    }
+    
+    // Get WiFi info (frequency and signal strength)
+    if let Ok(wifi_output) = Command::new("/System/Library/PrivateFrameworks/Apple80211.framework/Versions/Current/Resources/airport")
+        .args(&["-I"]).output() {
+        let wifi_str = String::from_utf8_lossy(&wifi_output.stdout);
+        for line in wifi_str.lines() {
+            let line = line.trim();
+            if line.contains("channel: ") {
+                if let Some(freq_part) = line.split("channel: ").nth(1) {
+                    frequency = format!("{} GHz", freq_part.trim());
+                }
+            }
+            if line.contains("agrCtlRSSI: ") {
+                if let Some(signal_part) = line.split("agrCtlRSSI: ").nth(1) {
+                    signal_strength = format!("{} dBm", signal_part.trim());
+                }
+            }
+        }
+    }
+    
+    NetworkInterfaceDetails {
+        ipv4_address: if ipv4_address.is_empty() { "N/A".to_string() } else { ipv4_address },
+        ipv6_address: if ipv6_address.is_empty() { "N/A".to_string() } else { ipv6_address },
+        mac_address: if mac_address.is_empty() { "N/A".to_string() } else { mac_address },
+        frequency,
+        signal_strength,
+        dns_servers,
+    }
+}
+
+// Placeholder functions for other platforms
+fn get_linux_ipv4() -> String { "N/A".to_string() }
+fn get_linux_ipv6() -> String { "N/A".to_string() }
+fn get_linux_mac() -> String { "N/A".to_string() }
+fn get_linux_dns() -> Vec<String> { vec![] }
+
+fn get_windows_ipv4() -> String { "N/A".to_string() }
+fn get_windows_ipv6() -> String { "N/A".to_string() }
+fn get_windows_mac() -> String { "N/A".to_string() }
+fn get_windows_dns() -> Vec<String> { vec![] }
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -95,6 +243,9 @@ async fn get_system_info() -> Result<SystemInfo, String> {
         }
     }).collect();
     
+    // Network interface details
+    let network_details = get_network_interface_details();
+    
     // System information
     let system_name = System::name().unwrap_or_else(|| "Unknown".to_string());
     let kernel_version = System::kernel_version().unwrap_or_else(|| "Unknown".to_string());
@@ -108,6 +259,7 @@ async fn get_system_info() -> Result<SystemInfo, String> {
         memory_percent,
         disk_usage,
         network_interfaces,
+        network_details,
         process_count,
         uptime,
         system_name,

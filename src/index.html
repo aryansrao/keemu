@@ -160,8 +160,47 @@
           </div>
         </div>
 
+        <!-- Network Info -->
+        <div class="card network-info-card" data-fade="up" data-delay="0.6">
+          <div class="card-header">
+            <h2>NETWORK INFO</h2>
+            <button class="detach-btn" data-component="network-info" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="metric">
+              <span class="label">IPv4</span>
+              <span id="ipv4-address" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">IPv6</span>
+              <span id="ipv6-address" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">MAC</span>
+              <span id="mac-address" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">FREQUENCY</span>
+              <span id="frequency" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">SIGNAL</span>
+              <span id="signal-strength" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">DNS</span>
+              <span id="dns-servers" class="value">Loading...</span>
+            </div>
+          </div>
+        </div>
+
         <!-- Top Processes -->
-        <div class="card processes-card" data-fade="up" data-delay="0.6">
+        <div class="card processes-card" data-fade="up" data-delay="0.7">
           <div class="card-header">
             <h2>PROCESSES</h2>
             <button class="detach-btn" data-component="processes" title="Pop out to new window">

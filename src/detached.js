@@ -231,6 +231,49 @@ function renderNetwork(systemInfo) {
   `;
 }
 
+function renderNetworkInfo(systemInfo) {
+  // Format DNS servers nicely
+  let dnsDisplay = 'N/A';
+  if (systemInfo.network_details.dns_servers.length > 0) {
+    const primaryDns = systemInfo.network_details.dns_servers.slice(0, 2);
+    dnsDisplay = primaryDns.join('<br>');
+  }
+
+  return `
+    <div class="card network-info-card">
+      <div class="card-header">
+        <h2>NETWORK INFO MONITOR</h2>
+      </div>
+      <div class="card-content">
+        <div class="metric">
+          <span class="label">IPv4</span>
+          <span class="value">${systemInfo.network_details.ipv4_address}</span>
+        </div>
+        <div class="metric">
+          <span class="label">IPv6</span>
+          <span class="value">${systemInfo.network_details.ipv6_address}</span>
+        </div>
+        <div class="metric">
+          <span class="label">MAC</span>
+          <span class="value">${systemInfo.network_details.mac_address}</span>
+        </div>
+        <div class="metric">
+          <span class="label">FREQUENCY</span>
+          <span class="value">${systemInfo.network_details.frequency}</span>
+        </div>
+        <div class="metric">
+          <span class="label">SIGNAL</span>
+          <span class="value">${systemInfo.network_details.signal_strength}</span>
+        </div>
+        <div class="metric">
+          <span class="label">DNS</span>
+          <span class="value dns-list">${dnsDisplay}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
 async function renderProcesses() {
   try {
     const processes = await invoke('get_top_processes');
@@ -298,6 +341,9 @@ async function updateComponent() {
           break;
         case 'network':
           content.innerHTML = renderNetwork(systemInfo);
+          break;
+        case 'network-info':
+          content.innerHTML = renderNetworkInfo(systemInfo);
           break;
       }
     }
