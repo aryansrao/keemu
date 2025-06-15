@@ -252,6 +252,10 @@ window.addEventListener("DOMContentLoaded", () => {
       
       const component = button.getAttribute('data-component');
       if (component) {
+        // Prevent multiple clicks
+        if (button.disabled) return;
+        button.disabled = true;
+        
         try {
           // Add visual feedback
           button.style.transform = 'scale(0.95)';
@@ -267,12 +271,14 @@ window.addEventListener("DOMContentLoaded", () => {
           setTimeout(() => {
             button.style.transform = '';
             button.style.opacity = '';
-          }, 150);
+            button.disabled = false;
+          }, 1000);
         } catch (error) {
           console.error('Failed to create detached window:', error);
           // Reset visual feedback on error
           button.style.transform = '';
           button.style.opacity = '';
+          button.disabled = false;
         }
       }
     });

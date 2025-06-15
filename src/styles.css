@@ -430,7 +430,7 @@ body {
 
 /* Detached Window Styles */
 .detached-window {
-  background: #000000 !important;
+  background: transparent !important;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
     Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   color: #ffffff;
@@ -442,27 +442,36 @@ body {
 .detached-container {
   width: 100%;
   height: 100vh;
-  background: #000000;
+  background: transparent !important;
   padding: 0;
   margin: 0;
-  -webkit-app-region: drag;
-  cursor: move;
 }
 
 .detached-content {
-  -webkit-app-region: no-drag;
   width: 100%;
   height: 100%;
-  padding: 1rem;
+  padding: 0;
   box-sizing: border-box;
+  -webkit-app-region: no-drag;
 }
 
 /* Make detached cards take full space */
 .detached-window .card {
   width: 100%;
-  height: calc(100% - 2rem);
+  height: 100%;
   margin: 0;
-  border-radius: 8px;
+  border-radius: 0;
+  background: #111111;
+  border: 1px solid #333333;
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+  transition: none !important;
+  transform: none !important;
+}
+
+/* Disable all hover effects for detached windows */
+.detached-window .card:hover {
+  transform: none !important;
+  box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1) !important;
 }
 
 .detached-window .card-header {
@@ -470,13 +479,72 @@ body {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #333333;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  -webkit-app-region: drag;
+  cursor: move;
+  position: relative;
 }
 
 .detached-window .card-header h2 {
   margin: 0;
   text-align: center;
+  flex: 1;
+  pointer-events: none;
+}
+
+/* Detached window header and close button styles */
+.detached-window .detached-header {
+  background: #1a1a1a;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #333333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-app-region: drag;
+  cursor: move;
+  min-height: 40px;
+}
+
+.detached-window .detached-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.detached-close-btn {
+  background: transparent;
+  border: 1px solid #333333;
+  color: #999999;
+  padding: 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+  -webkit-app-region: no-drag;
+}
+
+.detached-close-btn:hover {
+  background: #ff4444;
+  color: #ffffff;
+  border-color: #ff4444;
+}
+
+.detached-close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Adjust card content height to account for custom header */
+.detached-window .card-content {
+  height: calc(100% - 100px) !important;
+  overflow-y: auto;
 }
 
 /* Hide detach buttons in detached windows */

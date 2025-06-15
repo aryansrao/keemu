@@ -3,6 +3,23 @@ const { invoke } = window.__TAURI__.core;
 let refreshInterval = null;
 let componentType = null;
 
+// Close window function
+async function closeWindow() {
+  try {
+    await invoke('close_current_window');
+  } catch (error) {
+    console.error('Failed to close window:', error);
+    // Fallback method
+    try {
+      const { getCurrentWebviewWindow } = window.__TAURI__.webviewWindow;
+      const webviewWindow = getCurrentWebviewWindow();
+      await webviewWindow.close();
+    } catch (fallbackError) {
+      console.error('Fallback close also failed:', fallbackError);
+    }
+  }
+}
+
 // Utility functions
 function formatBytes(bytes) {
   if (bytes === 0) return '0 B';
@@ -42,6 +59,12 @@ function renderCPU(systemInfo) {
     <div class="card cpu-card">
       <div class="card-header">
         <h2>CPU MONITOR</h2>
+        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="card-content">
         <div class="gauge-container">
@@ -69,6 +92,12 @@ function renderMemory(systemInfo) {
     <div class="card memory-card">
       <div class="card-header">
         <h2>MEMORY MONITOR</h2>
+        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="card-content">
         <div class="gauge-container">
@@ -126,6 +155,12 @@ function renderStorage(systemInfo) {
     <div class="card disk-card">
       <div class="card-header">
         <h2>STORAGE MONITOR</h2>
+        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="card-content">
         <div class="disk-list">
@@ -141,6 +176,12 @@ function renderOverview(systemInfo) {
     <div class="card system-overview">
       <div class="card-header">
         <h2>SYSTEM OVERVIEW</h2>
+        <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       <div class="card-content">
         <div class="metric">
@@ -187,6 +228,12 @@ async function renderProcesses() {
       <div class="card processes-card">
         <div class="card-header">
           <h2>PROCESS MONITOR</h2>
+          <button class="detached-close-btn" onclick="closeWindow()" title="Close window">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
         <div class="card-content">
           <div class="process-list">

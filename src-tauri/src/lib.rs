@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use sysinfo::{System, Disks};
-use tauri::Manager;
+use tauri::{Manager, window::Color};
 
 #[derive(Serialize, Deserialize)]
 pub struct SystemInfo {
@@ -135,10 +135,16 @@ async fn create_detached_window(
     .resizable(true)
     .decorations(false)
     .always_on_top(false)
+    .background_color(Color(0, 0, 0, 0))
     .build()
     .map_err(|e| e.to_string())?;
     
     Ok(())
+}
+
+#[tauri::command]
+async fn close_current_window(window: tauri::Window) -> Result<(), String> {
+    window.close().map_err(|e| e.to_string())
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -148,7 +154,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             get_system_info, 
             get_top_processes, 
-            create_detached_window
+            create_detached_window,
+            close_current_window
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
