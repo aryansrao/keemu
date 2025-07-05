@@ -1,0 +1,791 @@
+:root {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 400;
+
+  color: #ffffff;
+  background-color: #000000;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-mono);
+  background: var(--primary-bg);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  min-height: 100vh;
+}
+
+.container {
+  margin: 0 auto;
+  padding: 2rem;
+  width: 100%;
+  max-width: 1400px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #333;
+}
+
+.header h1 {
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 2px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.status-indicator {
+  width: 12px;
+  height: 12px;
+  background: #00ff88;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: #111111;
+  border: 1px solid #333333;
+  border-radius: 8px;
+  padding: 0;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.card:hover {
+  border-color: #555555;
+  transform: translateY(-2px);
+}
+
+.card-header {
+  background: #1a1a1a;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #333333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-header h2 {
+  color: #ffffff;
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.detach-btn {
+  background: transparent;
+  border: 1px solid #333333;
+  color: #999999;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 32px;
+  height: 32px;
+}
+
+.detach-btn:hover {
+  background: #333333;
+  color: #ffffff;
+  border-color: #555555;
+  transform: translateY(-1px);
+}
+
+.detach-btn:active {
+  transform: translateY(0);
+}
+
+.detach-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+/* CPU and Memory Cards */
+.cpu-card .card-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 280px;
+  padding: 2rem 1.5rem;
+  position: relative;
+}
+
+.memory-card .card-content {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #222222;
+}
+
+.metric:last-child {
+  border-bottom: none;
+}
+
+.label {
+  font-size: 0.8rem;
+  color: #888888;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.value {
+  font-size: 0.9rem;
+  color: #ffffff;
+  font-weight: 400;
+}
+
+/* Circular Progress */
+.gauge-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Memory card gauge should not be absolutely positioned */
+.memory-card .gauge-container {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  margin: 1rem 0;
+  height: auto;
+}
+
+.circular-progress {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle {
+  transition: stroke-dasharray 0.35s;
+  transform: rotate(0deg);
+  transform-origin: 50% 50%;
+}
+
+.progress-ring-progress {
+  stroke-linecap: round;
+  stroke-dasharray: 0 339.292;
+  transition: stroke-dasharray 0.6s ease;
+}
+
+.progress-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.percentage {
+  font-size: 1.4rem;
+  font-weight: 300;
+  color: #ffffff;
+}
+
+.unit {
+  font-size: 0.7rem;
+  color: #888888;
+  letter-spacing: 1px;
+}
+
+/* Memory Details */
+.memory-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 1.5rem;
+  padding: 1rem 0;
+  border-top: 1px solid #333333;
+}
+
+.memory-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #888888;
+  margin-bottom: 0.5rem;
+  letter-spacing: 1px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1rem;
+  color: #ffffff;
+  font-weight: 600;
+  white-space: nowrap;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+}
+
+/* Disk List */
+
+.disk-item {
+  background: #1a1a1a;
+  border: 1px solid #333333;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.disk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.disk-name {
+  font-size: 0.9rem;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.disk-usage {
+  font-size: 0.8rem;
+  color: #888888;
+}
+
+.disk-bar {
+  width: 100%;
+  height: 4px;
+  background: #333333;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.disk-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff88, #00cc6a);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Network List */
+.network-list {
+  margin-top: 0;
+}
+
+.network-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #333333;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #888888;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.network-header span:nth-child(1) {
+  text-align: left;
+}
+
+.network-header span:nth-child(2),
+.network-header span:nth-child(3),
+.network-header span:nth-child(4) {
+  text-align: right;
+  justify-self: end;
+}
+
+.network-interfaces {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.network-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #222222;
+  font-size: 0.8rem;
+  transition: background-color 0.2s ease;
+  align-items: center;
+}
+
+.network-item:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+.network-item:last-child {
+  border-bottom: none;
+}
+
+.network-name {
+  color: #ffffff;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.network-rx {
+  color: #00ff88;
+  text-align: right;
+  justify-self: end;
+}
+
+.network-tx {
+  color: #ff6b6b;
+  text-align: right;
+  justify-self: end;
+}
+
+.network-errors {
+  color: #888888;
+  text-align: right;
+  justify-self: end;
+}
+
+.network-errors.has-errors {
+  color: #ff6b6b;
+}
+
+/* Network Info Card */
+.network-info-card .card-content {
+  padding: 1.5rem;
+}
+
+.network-info-card .metric {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #333333;
+  font-size: 0.85rem;
+}
+
+.network-info-card .metric:last-child {
+  border-bottom: none;
+}
+
+.network-info-card .metric .label {
+  color: #888888;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.network-info-card .metric .value {
+  color: #ffffff;
+  font-weight: 500;
+  font-family: 'SF Mono', Monaco, 'Cascadia Code', 'Roboto Mono', Consolas, 'Courier New', monospace;
+  text-align: right;
+  max-width: 60%;
+  word-break: break-all;
+}
+
+.network-info-card .metric .value.dns-list {
+  font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+/* Process List */
+.process-list {
+  margin-top: 0;
+}
+
+.process-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #333333;
+  margin-bottom: 0.5rem;
+  font-size: 0.8rem;
+  color: #888888;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.processes {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.process-item {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid #222222;
+  align-items: center;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+}
+
+.process-item:hover {
+  background: #1a1a1a;
+}
+
+.process-item:last-child {
+  border-bottom: none;
+}
+
+.process-name {
+  color: #ffffff;
+  font-weight: 400;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.process-cpu, .process-memory {
+  color: #888888;
+  font-weight: 400;
+}
+
+/* Scrollbar Styling */
+.processes::-webkit-scrollbar {
+  width: 6px;
+}
+
+.processes::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+
+.processes::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 3px;
+}
+
+.processes::-webkit-scrollbar-thumb:hover {
+  background: #555555;
+}
+
+
+
+/* Animation Classes */
+[data-fade] {
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .process-header,
+  .process-item {
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 0.5rem;
+    font-size: 0.7rem;
+  }
+  
+  .percentage {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .memory-details {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .progress-ring {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .progress-ring-circle,
+  .progress-ring-progress {
+    r: 44;
+  }
+}
+
+/* Detached Window Styles */
+.detached-window {
+  background: transparent !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Try to style the window chrome */
+html.detached-window {
+  background: #000000 !important;
+}
+
+/* Hide the default window controls and style the title bar */
+.detached-window::-webkit-window-controls {
+  display: none !important;
+}
+
+/* Style the title bar background */
+.detached-window {
+  --title-bar-background: #1a1a1a;
+  --title-bar-text-color: #ffffff;
+}
+
+/* Additional styling to match the header */
+.detached-window .card {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* Make the card look like it's the entire window */
+.detached-window .card {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: #111111;
+  border: none;
+  box-shadow: none;
+  transition: none !important;
+  transform: none !important;
+}
+
+/* Style the header to look like a title bar */
+.detached-window .card-header {
+  background: #2d2d2d;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #333333;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+  border-top: none;
+}
+
+/* Add an invisible drag area that extends beyond the header */
+.detached-window .card-header::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  -webkit-app-region: drag;
+  z-index: -1;
+}
+
+.detached-window .card-header h2 {
+  margin: 0;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* Detached window header and close button styles */
+.detached-window .detached-header {
+  background: #1a1a1a;
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #333333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  -webkit-app-region: drag;
+  cursor: move;
+  min-height: 40px;
+}
+
+.detached-window .detached-title {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  color: #ffffff;
+}
+
+.detached-close-btn {
+  background: transparent;
+  border: 1px solid #333333;
+  color: #999999;
+  padding: 0.4rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  width: 24px;
+  height: 24px;
+  -webkit-app-region: no-drag;
+}
+
+.detached-close-btn:hover {
+  background: #ff4444;
+  color: #ffffff;
+  border-color: #ff4444;
+}
+
+.detached-close-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Adjust card content height to account for custom header */
+.detached-window .card-content {
+  height: calc(100% - 60px) !important;
+  overflow-y: auto;
+  -webkit-app-region: no-drag;
+}
+
+/* Make all text and interactive elements non-draggable */
+.detached-window .card-content * {
+  -webkit-app-region: no-drag;
+}
+
+.detached-window h2 {
+  -webkit-app-region: no-drag;
+  pointer-events: none;
+}
+
+/* Hide detach buttons in detached windows */
+.detached-window .detach-btn {
+  display: none;
+}
+
+.detached-container {
+  width: 100%;
+  height: 100vh;
+  background: #000000 !important;
+  padding: 0;
+  margin: 0;
+  -webkit-app-region: drag;
+}
+
+.detached-content {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-app-region: no-drag;
+}
+
+/* Simple responsive fix for very narrow detached windows */
+.detached-window .gauge-container {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+}
+
+.detached-window .circular-progress {
+  flex-shrink: 0;
+}
+
+/* Ensure progress rings don't overflow in narrow windows */
+@media (max-width: 350px) {
+  .detached-window .progress-ring {
+    max-width: calc(100vw - 60px);
+    max-height: calc(100vw - 60px);
+    width: auto !important;
+    height: auto !important;
+  }
+}
+
+
+

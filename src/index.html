@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keemu System Monitor</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script type="module" src="/main.js" defer></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <header class="header" data-fade="up">
+        <h1>SYSTEM MONITOR</h1>
+        <div class="status-indicator"></div>
+      </header>
+
+      <div class="grid">
+        <!-- System Overview -->
+        <div class="card system-overview" data-fade="up" data-delay="0.1">
+          <div class="card-header">
+            <h2>OVERVIEW</h2>
+            <button class="detach-btn" data-component="overview" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="metric">
+              <span class="label">SYSTEM</span>
+              <span id="system-name" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">KERNEL</span>
+              <span id="kernel-version" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">HOST</span>
+              <span id="host-name" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">UPTIME</span>
+              <span id="uptime" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">PROCESSES</span>
+              <span id="process-count" class="value">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CPU Usage -->
+        <div class="card cpu-card" data-fade="up" data-delay="0.2">
+          <div class="card-header">
+            <h2>CPU</h2>
+            <button class="detach-btn" data-component="cpu" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="gauge-container">
+              <div class="circular-progress">
+                <svg class="progress-ring" width="120" height="120">
+                  <circle class="progress-ring-circle" cx="60" cy="60" r="54" stroke="#333" stroke-width="8" fill="transparent"/>
+                  <circle class="progress-ring-progress" cx="60" cy="60" r="54" stroke="#00ff88" stroke-width="8" fill="transparent" id="cpu-circle"/>
+                </svg>
+                <div class="progress-text">
+                  <span id="cpu-percentage" class="percentage">0%</span>
+                  <span class="unit">CPU</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Memory Usage -->
+        <div class="card memory-card" data-fade="up" data-delay="0.3">
+          <div class="card-header">
+            <h2>MEMORY</h2>
+            <button class="detach-btn" data-component="memory" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="gauge-container">
+              <div class="circular-progress">
+                <svg class="progress-ring" width="120" height="120">
+                  <circle class="progress-ring-circle" cx="60" cy="60" r="54" stroke="#333" stroke-width="8" fill="transparent"/>
+                  <circle class="progress-ring-progress" cx="60" cy="60" r="54" stroke="#ff0066" stroke-width="8" fill="transparent" id="memory-circle"/>
+                </svg>
+                <div class="progress-text">
+                  <span id="memory-percentage" class="percentage">0%</span>
+                  <span class="unit">RAM</span>
+                </div>
+              </div>
+            </div>
+            <div class="memory-details">
+              <div class="memory-stat">
+                <span class="stat-label">USED</span>
+                <span id="memory-used" class="stat-value">0 GB</span>
+              </div>
+              <div class="memory-stat">
+                <span class="stat-label">TOTAL</span>
+                <span id="memory-total" class="stat-value">0 GB</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disk Usage -->
+        <div class="card disk-card" data-fade="up" data-delay="0.4">
+          <div class="card-header">
+            <h2>STORAGE</h2>
+            <button class="detach-btn" data-component="storage" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div id="disk-list" class="disk-list">
+              <!-- Disk items will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Network Interfaces -->
+        <div class="card network-card" data-fade="up" data-delay="0.5">
+          <div class="card-header">
+            <h2>NETWORK</h2>
+            <button class="detach-btn" data-component="network" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="network-list">
+              <div class="network-header">
+                <span>INTERFACE</span>
+                <span>RX</span>
+                <span>TX</span>
+                <span>ERRORS</span>
+              </div>
+              <div id="network-interfaces" class="network-interfaces">
+                <!-- Network interface items will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Network Info -->
+        <div class="card network-info-card" data-fade="up" data-delay="0.6">
+          <div class="card-header">
+            <h2>NETWORK INFO</h2>
+            <button class="detach-btn" data-component="network-info" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="metric">
+              <span class="label">IPv4</span>
+              <span id="ipv4-address" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">IPv6</span>
+              <span id="ipv6-address" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">MAC</span>
+              <span id="mac-address" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">FREQUENCY</span>
+              <span id="frequency" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">SIGNAL</span>
+              <span id="signal-strength" class="value">Loading...</span>
+            </div>
+            <div class="metric">
+              <span class="label">DNS</span>
+              <span id="dns-servers" class="value">Loading...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Processes -->
+        <div class="card processes-card" data-fade="up" data-delay="0.7">
+          <div class="card-header">
+            <h2>PROCESSES</h2>
+            <button class="detach-btn" data-component="processes" title="Pop out to new window">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M7 7h10v10"/>
+                <path d="M7 17 17 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="card-content">
+            <div class="process-list">
+              <div class="process-header">
+                <span>NAME</span>
+                <span>CPU</span>
+                <span>MEMORY</span>
+              </div>
+              <div id="process-list" class="processes">
+                <!-- Process items will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="main.js"></script>
+  </body>
+</html>

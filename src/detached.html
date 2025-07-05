@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Keemu Monitor</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+      /* Ensure completely black background */
+      html, body {
+        background: #000000 !important;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+      }
+    </style>
+  </head>
+
+  <body class="detached-window">
+    <div class="detached-container">
+      <div id="detached-content" class="detached-content">
+        <!-- Component content will be inserted here -->
+      </div>
+    </div>
+
+    <script src="detached.js"></script>
+  </body>
+</html>
